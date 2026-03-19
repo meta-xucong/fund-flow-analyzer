@@ -101,9 +101,9 @@ class FundFlowSystem:
             if market_data is None or len(market_data) == 0:
                 raise RuntimeError("获取市场数据失败")
             
-            self.logger.info(f"✓ 市场数据: {len(market_data)} 只股票")
+            self.logger.info(f"[OK] 市场数据: {len(market_data)} 只股票")
             if sector_list is not None:
-                self.logger.info(f"✓ 板块数据: {len(sector_list)} 个板块")
+                self.logger.info(f"[OK] 板块数据: {len(sector_list)} 个板块")
             
             # ========== 2. 数据存储 ==========
             if save_data:
@@ -124,24 +124,26 @@ class FundFlowSystem:
                 if northbound_data is not None:
                     self.storage.save_northbound_flow(northbound_data)
                 
-                self.logger.info("✓ 数据存储完成")
+                self.logger.info("[OK] 数据存储完成")
             
             # ========== 3. 市场分析 ==========
             self.logger.info("\n【3/5】市场分析...")
             
             # 情绪分析
             sentiment = self.analyzer.analyze_market_sentiment(market_data)
-            self.logger.info(f"✓ 市场情绪: {sentiment['sentiment']} (分数: {sentiment['score']:.1f})")
+            self.logger.info(f"[OK] 市场情绪: {sentiment['sentiment']} (分数: {sentiment['score']:.1f})")
             
             # 板块分析
-            sector_analysis = self.analyzer.analyze_sector_rotation(
-                sector_list if sector_list is not None else pd.DataFrame()
-            )
-            self.logger.info(f"✓ 热点板块: {sector_analysis.get('top_sector', '未知')}")
+            if sector_list is not None and len(sector_list) > 0:
+                sector_analysis = self.analyzer.analyze_sector_rotation(sector_list)
+                self.logger.info(f"[OK] 热点板块: {sector_analysis.get('top_sector', '未知')}")
+            else:
+                self.logger.warning("[WARN] 板块数据为空，跳过板块分析")
+                sector_analysis = {'top_sector': '未知', 'strong_sectors': [], 'focus_recommendation': '暂无'}
             
             # 量能分析
             volume_analysis = self.analyzer.analyze_volume(market_data)
-            self.logger.info(f"✓ 量能状态: {volume_analysis.get('volume_assessment', '未知')}")
+            self.logger.info(f"[OK] 量能状态: {volume_analysis.get('volume_assessment', '未知')}")
             
             # ========== 4. 选股策略 ==========
             self.logger.info("\n【4/5】执行选股策略...")
@@ -150,7 +152,7 @@ class FundFlowSystem:
             
             for strategy_name, picks in stock_picks.items():
                 count = len(picks) if picks is not None else 0
-                self.logger.info(f"✓ {strategy_name}: 选出 {count} 只股票")
+                self.logger.info(f"[OK] {strategy_name}: 选出 {count} 只股票")
                 
                 # 保存选股结果
                 if save_data and picks is not None and len(picks) > 0:
@@ -160,7 +162,7 @@ class FundFlowSystem:
             self.logger.info("\n【5/5】生成报告...")
             
             # 准备板块数据 (已计算强度)
-            if sector_list is not None:
+            if sector_list is not None and len(sector_list) > 0:
                 sector_data_scored = self.sector_calculator.calculate(sector_list)
             else:
                 sector_data_scored = pd.DataFrame()
@@ -179,7 +181,7 @@ class FundFlowSystem:
             # 保存报告
             saved_files = self.report_generator.save_report(report_data, date)
             
-            self.logger.info(f"✓ 报告已保存:")
+            self.logger.info(f"[OK] 报告已保存:")
             for file_type, file_path in saved_files.items():
                 self.logger.info(f"  - {file_type}: {file_path}")
             
@@ -340,9 +342,9 @@ def main():
         )
         
         if result['status'] == 'success':
-            print("\n✓ 分析执行成功!")
+            print("\n[OK] 分析执行成功!")
         else:
-            print(f"\n✗ 分析执行失败: {result.get('error', '未知错误')}")
+            print(f"\n[ERROR] 分析执行失败: {result.get('error', '未知错误')}")
             sys.exit(1)
 
 

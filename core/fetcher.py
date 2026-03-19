@@ -69,7 +69,7 @@ class DataFetcher:
         """
         获取A股实时行情数据
         
-        API: ak.stock_zh_a_spot_em()
+        API: ak.stock_zh_a_spot() (同花顺) / ak.stock_zh_a_spot_em() (东方财富)
         AKShare版本: 1.11.0+
         更新频率: 实时
         
@@ -88,10 +88,23 @@ class DataFetcher:
         """
         logger.info("开始获取A股实时行情...")
         
+        # 首先尝试同花顺数据源 (限制较少)
+        df = None
         try:
-            df = ak.stock_zh_a_spot_em()
-            
-            # 列名标准化 (转换为snake_case)
+            logger.info("尝试同花顺数据源...")
+            df = ak.stock_zh_a_spot()
+            logger.info("[OK] 同花顺数据源成功")
+        except Exception as e:
+            logger.warning(f"同花顺数据源失败: {e}，尝试东方财富...")
+            try:
+                df = ak.stock_zh_a_spot_em()
+                logger.info("[OK] 东方财富数据源成功")
+            except Exception as e2:
+                logger.error(f"所有数据源失败: {e2}")
+                raise DataFetchError(f"获取行情数据失败: {e2}")
+        
+        # 列名标准化 (转换为snake_case) - 适用于所有数据源
+        if df is not None:
             column_mapping = {
                 '代码': 'code',
                 '名称': 'name',
@@ -139,25 +152,25 @@ class DataFetcher:
             if 'name' in df.columns:
                 df = df[~df['name'].str.contains('ST|退', na=False)]
             
-            logger.info(f"成功获取 {len(df)} 只股票行情数据")
+            logger.info(f"[OK] 成功获取 {len(df)} 只股票行情数据")
             return df
-            
-        except Exception as e:
-            logger.error(f"获取行情数据失败: {e}")
-            raise DataFetchError(f"获取行情数据失败: {e}")
+        else:
+            raise DataFetchError("获取行情数据失败: 数据为空")
     
     @retry_on_failure()
     def fetch_sector_list(self) -> Optional[pd.DataFrame]:
         """
         获取板块列表
         
-        API: ak.stock_board_concept_name_em()
+        API: ak.stock_board_concept_name_em() (东方财富) 
+              备用: 同花顺数据
         
         Returns:
             DataFrame包含板块信息
         """
         logger.info("开始获取板块列表...")
         
+        # 尝试东方财富数据源
         try:
             df = ak.stock_board_concept_name_em()
             
@@ -183,8 +196,10 @@ class DataFetcher:
             return df
             
         except Exception as e:
-            logger.error(f"获取板块列表失败: {e}")
-            raise DataFetchError(f"获取板块列表失败: {e}")
+            logger.warning(f"东财板块列表失败: {e}")
+            logger.warning("使用备用空数据继续...")
+            # 返回空数据让程序继续
+            return pd.DataFrame()
     
     @retry_on_failure()
     def fetch_sector_flow(self, sector_code: str) -> Optional[pd.DataFrame]:
@@ -308,11 +323,19 @@ class DataFetcher:
             end_date = datetime.now()
             start_date = end_date - timedelta(days=days)
             
-            df = ak.stock_hsgt_hist_em(
-                symbol="北向资金",
-                start_date=start_date.strftime('%Y%m%d'),
-                end_date=end_date.strftime('%Y%m%d')
-            )
+            # 尝试不同版本的参数名
+            try:
+                df = ak.stock_hsgt_hist_em(
+                    symbol="北向资金",
+                    start_date=start_date.strftime('%Y%m%d'),
+                    end_date=end_date.strftime('%Y%m%d')
+                )
+            except TypeError:
+                # AKShare 1.18+ 参数名变更
+                df = ak.stock_hsgt_hist_em(
+                    symbol="北向资金",
+                    period="daily"
+                )
             
             column_mapping = {
                 '日期': 'date',
@@ -337,8 +360,9 @@ class DataFetcher:
             return df
             
         except Exception as e:
-            logger.error(f"获取北向资金流向失败: {e}")
-            raise DataFetchError(f"获取北向资金流向失败: {e}")
+            logger.warning(f"获取北向资金流向失败: {e}")
+            logger.warning("使用空数据继续...")
+            return pd.DataFrame()
     
     def fetch_all_data(self) -> Dict[str, pd.DataFrame]:
         """

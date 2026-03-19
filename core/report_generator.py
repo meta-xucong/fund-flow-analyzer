@@ -17,6 +17,7 @@ import matplotlib.patches as mpatches
 from matplotlib import rcParams
 
 from config.settings import settings
+from core.explanation import AnalysisExplainer, PrincipleLibrary
 
 logger = logging.getLogger(__name__)
 
@@ -76,6 +77,16 @@ class ReportGenerator:
         
         logger.info(f"开始生成完整报告: {date}")
         
+        # 生成分析解释
+        explainer = AnalysisExplainer()
+        explanations = explainer.generate_full_explanation(
+            sentiment_analysis,
+            volume_analysis,
+            sector_data,
+            stock_picks,
+            sector_analysis
+        )
+        
         report = {
             'meta': {
                 'report_id': f"RPT{date.replace('-', '')}090000",
@@ -112,7 +123,16 @@ class ReportGenerator:
             ),
             'action_plan': self._generate_action_plan(
                 sector_analysis, stock_picks
-            )
+            ),
+            'explanations': explanations,
+            'principles': {
+                'market_sentiment': PrincipleLibrary.get_principle('market_sentiment'),
+                'sector_strength': PrincipleLibrary.get_principle('sector_strength'),
+                'momentum_strategy': PrincipleLibrary.get_principle('momentum_strategy'),
+                'reversal_strategy': PrincipleLibrary.get_principle('reversal_strategy'),
+                'fund_flow_strategy': PrincipleLibrary.get_principle('fund_flow_strategy'),
+                'risk_assessment': PrincipleLibrary.get_principle('risk_assessment')
+            }
         }
         
         logger.info(f"完整报告生成完成")
@@ -136,6 +156,7 @@ class ReportGenerator:
         picks = report_data.get('stock_picks', {})
         risk = report_data.get('risk_assessment', {})
         action = report_data.get('action_plan', {})
+        explanations = report_data.get('explanations', {})
         
         lines = []
         lines.append("=" * 80)
@@ -153,6 +174,11 @@ class ReportGenerator:
         if volume:
             lines.append(f"  量能状态: {volume.get('volume_assessment', '未知')} | "
                         f"放量个股占比: {volume.get('high_volume_ratio', 0):.1f}%")
+        
+        # 添加解释
+        sentiment_exp = explanations.get('market_sentiment', '')
+        if sentiment_exp:
+            lines.append(f"  分析说明: {sentiment_exp}")
         lines.append("")
         
         # 板块排行
@@ -163,9 +189,18 @@ class ReportGenerator:
                         f"涨跌幅:{sector.get('change_pct', 0):>+6.2f}%  "
                         f"强度分:{sector.get('strength_score', 0):>5.1f}  "
                         f"评级:{sector.get('strength_rating', '未知')}")
+        
+        # 添加板块解释
+        sector_exp = explanations.get('sector_strength', '')
+        if sector_exp:
+            lines.append("")
+            lines.append("  板块分析说明:")
+            for line in sector_exp.split('\n'):
+                lines.append(f"    {line}")
         lines.append("")
         
         # 选股结果
+        pick_explanations = explanations.get('stock_picks', {})
         for strategy_name, stocks in picks.items():
             if not stocks:
                 continue
@@ -176,6 +211,15 @@ class ReportGenerator:
                 'fund_flow': '资金流向策略 (中线)'
             }
             lines.append(f"【{strategy_names.get(strategy_name, strategy_name)}】")
+            
+            # 显示选股解释
+            strategy_exp = pick_explanations.get(strategy_name, [])
+            if strategy_exp:
+                lines.append("  选股理由:")
+                for exp in strategy_exp[:3]:
+                    lines.append(f"    • {exp}")
+                lines.append("")
+            
             for stock in stocks[:5]:  # 只显示前5
                 lines.append(f"  📌 {stock['code']} {stock['name']:<8} "
                             f"得分:{stock['score']:.1f} | {stock['reason']}")
@@ -186,6 +230,11 @@ class ReportGenerator:
         lines.append(f"  风险等级: {risk.get('market_risk', '未知')}")
         for suggestion in risk.get('suggestions', []):
             lines.append(f"  ⚠️  {suggestion}")
+        
+        # 添加风险解释
+        risk_exp = explanations.get('risk_assessment', '')
+        if risk_exp:
+            lines.append(f"  风险分析: {risk_exp}")
         lines.append("")
         
         # 操作建议
@@ -199,6 +248,40 @@ class ReportGenerator:
         lines.append("=" * 80)
         lines.append(f"报告生成时间: {meta['generated_at']}")
         lines.append("=" * 80)
+        lines.append("")
+        
+        # 添加分析原理说明
+        principles = report_data.get('principles', {})
+        if principles:
+            lines.append("")
+            lines.append("=" * 80)
+            lines.append("【分析原理说明】")
+            lines.append("=" * 80)
+            lines.append("")
+            
+            lines.append("■ 市场情绪分析原理")
+            lines.append(principles.get('market_sentiment', ''))
+            lines.append("")
+            
+            lines.append("■ 板块强度评分原理")
+            lines.append(principles.get('sector_strength', ''))
+            lines.append("")
+            
+            lines.append("■ 动量策略原理")
+            lines.append(principles.get('momentum_strategy', ''))
+            lines.append("")
+            
+            lines.append("■ 反转策略原理")
+            lines.append(principles.get('reversal_strategy', ''))
+            lines.append("")
+            
+            lines.append("■ 资金流向策略原理")
+            lines.append(principles.get('fund_flow_strategy', ''))
+            lines.append("")
+            
+            lines.append("■ 风险评估原理")
+            lines.append(principles.get('risk_assessment', ''))
+            lines.append("")
         
         return "\n".join(lines)
     

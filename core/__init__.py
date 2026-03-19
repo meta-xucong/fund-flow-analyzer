@@ -7,6 +7,7 @@ from core.storage import DataStorage
 from core.analyzer import SectorStrengthCalculator, MarketAnalyzer
 from core.selector import MomentumStrategy, ReversalStrategy, FundFlowStrategy
 from core.report_generator import ReportGenerator
+from core.explanation import AnalysisExplainer, PrincipleLibrary, explain_analysis
 
 __all__ = [
     'DataFetcher',
@@ -16,5 +17,8 @@ __all__ = [
     'MomentumStrategy',
     'ReversalStrategy',
     'FundFlowStrategy',
-    'ReportGenerator'
+    'ReportGenerator',
+    'AnalysisExplainer',
+    'PrincipleLibrary',
+    'explain_analysis'
 ]
