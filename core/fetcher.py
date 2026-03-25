@@ -5,6 +5,11 @@
 使用AKShare获取A股市场数据
 API文档: https://www.akshare.xyz/
 """
+import os
+# 设置代理例外（必须在导入akshare前设置）
+os.environ['NO_PROXY'] = 'eastmoney.com,push2.eastmoney.com,push2his.eastmoney.com,10jqka.com.cn,localhost,127.0.0.1'
+os.environ['no_proxy'] = 'eastmoney.com,push2.eastmoney.com,push2his.eastmoney.com,10jqka.com.cn,localhost,127.0.0.1'
+
 import logging
 import time
 from datetime import datetime, timedelta
@@ -57,105 +62,64 @@ class DataFetcher:
     数据采集器
     
     封装AKShare API调用，提供统一的数据获取接口
+    支持盘前数据截止时间控制 (默认9:25)
     """
     
-    def __init__(self):
-        """初始化采集器"""
+    def __init__(self, cutoff_minute: int = None):
+        """
+        初始化采集器
+        
+        Args:
+            cutoff_minute: 数据截止分钟数 (默认从配置读取)
+        """
         self.akshare_version = ak.__version__
+        self.cutoff_minute = cutoff_minute or settings.DATA_CUTOFF_MINUTE
         logger.info(f"DataFetcher初始化完成，AKShare版本: {self.akshare_version}")
+        logger.info(f"数据截止分钟数: {self.cutoff_minute} (模拟9:{self.cutoff_minute:02d}数据)")
     
-    @retry_on_failure()
-    def fetch_market_spot(self) -> Optional[pd.DataFrame]:
+    def fetch_market_spot(self, use_open_price: bool = False) -> Optional[pd.DataFrame]:
         """
-        获取A股实时行情数据
+        获取A股实时行情数据 - 使用多数据源轮询机制
         
-        API: ak.stock_zh_a_spot() (同花顺) / ak.stock_zh_a_spot_em() (东方财富)
-        AKShare版本: 1.11.0+
-        更新频率: 实时
+        优先使用稳定性高的数据源，失败自动切换
         
+        Args:
+            use_open_price: 是否使用开盘价模拟9:25数据(用于回测)
+            
         Returns:
-            DataFrame包含所有A股实时行情，列包括:
-            - code: 股票代码
-            - name: 股票名称
-            - latest_price: 最新价
-            - change_pct: 涨跌幅(%)
-            - volume: 成交量
-            - amount: 成交额
-            - volume_ratio: 量比
-            
-        Raises:
-            DataFetchError: 数据获取失败
+            DataFrame包含所有A股实时行情
         """
-        logger.info("开始获取A股实时行情...")
-        
-        # 首先尝试同花顺数据源 (限制较少)
-        df = None
-        try:
-            logger.info("尝试同花顺数据源...")
-            df = ak.stock_zh_a_spot()
-            logger.info("[OK] 同花顺数据源成功")
-        except Exception as e:
-            logger.warning(f"同花顺数据源失败: {e}，尝试东方财富...")
-            try:
-                df = ak.stock_zh_a_spot_em()
-                logger.info("[OK] 东方财富数据源成功")
-            except Exception as e2:
-                logger.error(f"所有数据源失败: {e2}")
-                raise DataFetchError(f"获取行情数据失败: {e2}")
-        
-        # 列名标准化 (转换为snake_case) - 适用于所有数据源
-        if df is not None:
-            column_mapping = {
-                '代码': 'code',
-                '名称': 'name',
-                '最新价': 'latest_price',
-                '涨跌幅': 'change_pct',
-                '涨跌额': 'change_amount',
-                '成交量': 'volume',
-                '成交额': 'amount',
-                '振幅': 'amplitude',
-                '最高': 'high',
-                '最低': 'low',
-                '今开': 'open',
-                '昨收': 'pre_close',
-                '量比': 'volume_ratio',
-                '换手率': 'turnover',
-                '市盈率-动态': 'pe_dynamic',
-                '市净率': 'pb',
-                '总市值': 'total_market_cap',
-                '流通市值': 'float_market_cap',
-                '涨速': 'speed',
-                '5分钟涨跌': 'change_5min',
-                '60日涨跌幅': 'change_60d',
-                '年初至今涨跌幅': 'change_ytd',
-            }
-            
-            # 重命名存在的列
-            df = df.rename(columns={k: v for k, v in column_mapping.items() if k in df.columns})
-            
-            # 添加元数据
-            df['fetch_time'] = datetime.now()
-            df['data_date'] = datetime.now().strftime('%Y-%m-%d')
-            
-            # 数据类型转换
-            numeric_columns = [
-                'latest_price', 'change_pct', 'change_amount', 'volume', 'amount',
-                'amplitude', 'high', 'low', 'open', 'pre_close', 'volume_ratio',
-                'turnover', 'pe_dynamic', 'pb', 'total_market_cap', 'float_market_cap'
-            ]
-            
-            for col in numeric_columns:
-                if col in df.columns:
-                    df[col] = pd.to_numeric(df[col], errors='coerce')
-            
-            # 过滤ST股票和退市股票
-            if 'name' in df.columns:
-                df = df[~df['name'].str.contains('ST|退', na=False)]
-            
-            logger.info(f"[OK] 成功获取 {len(df)} 只股票行情数据")
-            return df
+        cutoff_time_str = f"09:{self.cutoff_minute:02d}"
+        if use_open_price:
+            logger.info(f"获取A股行情 (使用开盘价模拟{cutoff_time_str}数据用于回测)...")
         else:
-            raise DataFetchError("获取行情数据失败: 数据为空")
+            logger.info(f"获取A股实时行情 ({cutoff_time_str}数据)...")
+        
+        # 使用多数据源获取器
+        from core.multi_source_fetcher import get_multi_source_fetcher
+        multi_fetcher = get_multi_source_fetcher()
+        
+        df = multi_fetcher.fetch_market_spot(max_retries=3, retry_delay=2.0)
+        
+        if df is None:
+            raise DataFetchError("所有数据源均获取失败")
+        
+        # 添加元数据
+        df['cutoff_minute'] = self.cutoff_minute
+        df['cutoff_time'] = f"09:{self.cutoff_minute:02d}"
+        df['data_source_type'] = 'open' if use_open_price else 'real'
+        
+        # 如果使用开盘价模式(回测)，将开盘价作为最新价
+        if use_open_price and 'open' in df.columns:
+            logger.info("[回测模式] 使用开盘价作为9:25数据")
+            df['latest_price'] = df['open']
+            if 'pre_close' in df.columns:
+                df['change_pct'] = ((df['open'] - df['pre_close']) / df['pre_close'] * 100).round(2)
+        
+        logger.info(f"[OK] 成功获取 {len(df)} 只股票行情数据")
+        logger.info(f"[INFO] 数据截止时间: 09:{self.cutoff_minute:02d}")
+        
+        return df
     
     @retry_on_failure()
     def fetch_sector_list(self) -> Optional[pd.DataFrame]:
@@ -364,10 +328,13 @@ class DataFetcher:
             logger.warning("使用空数据继续...")
             return pd.DataFrame()
     
-    def fetch_all_data(self) -> Dict[str, pd.DataFrame]:
+    def fetch_all_data(self, use_open_price: bool = False) -> Dict[str, pd.DataFrame]:
         """
         批量获取所有所需数据
         
+        Args:
+            use_open_price: 是否使用开盘价模拟9:25数据(用于回测)
+            
         Returns:
             Dict包含所有数据
         """
@@ -380,7 +347,7 @@ class DataFetcher:
         }
         
         # 获取市场概况
-        result['market_spot'] = self.fetch_market_spot()
+        result['market_spot'] = self.fetch_market_spot(use_open_price=use_open_price)
         
         # 获取板块列表
         result['sector_list'] = self.fetch_sector_list()

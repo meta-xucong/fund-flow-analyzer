@@ -1,0 +1,153 @@
+{
+  "date": "2025-02-07",
+  "generated_at": "2026-03-24 13:22:54",
+  "sentiment": {
+    "score": 84.0,
+    "status": "乐观",
+    "up_count": 42,
+    "down_count": 7,
+    "up_ratio": 0.84,
+    "limit_up": 2,
+    "limit_down": 0,
+    "avg_change": 1.76
+  },
+  "sector_ranking": [
+    {
+      "rank": 1,
+      "name": "次新股",
+      "change_pct": 1.14,
+      "amount": 21529898277
+    },
+    {
+      "rank": 2,
+      "name": "陶瓷行业",
+      "change_pct": 0.76,
+      "amount": 1196564352
+    },
+    {
+      "rank": 3,
+      "name": "电力行业",
+      "change_pct": 0.33,
+      "amount": 41107725053
+    },
+    {
+      "rank": 4,
+      "name": "船舶制造",
+      "change_pct": 0.27,
+      "amount": 3309431803
+    },
+    {
+      "rank": 5,
+      "name": "酿酒行业",
+      "change_pct": 0.25,
+      "amount": 6446980911
+    },
+    {
+      "rank": 6,
+      "name": "生物制药",
+      "change_pct": 0.24,
+      "amount": 20969926140
+    },
+    {
+      "rank": 7,
+      "name": "商业百货",
+      "change_pct": 0.22,
+      "amount": 16528987691
+    },
+    {
+      "rank": 8,
+      "name": "酒店旅游",
+      "change_pct": 0.21,
+      "amount": 3987141328
+    },
+    {
+      "rank": 9,
+      "name": "水泥行业",
+      "change_pct": 0.21,
+      "amount": 2328005126
+    },
+    {
+      "rank": 10,
+      "name": "家电行业",
+      "change_pct": 0.21,
+      "amount": 8578431666
+    }
+  ],
+  "momentum_picks": [
+    {
+      "code": "000066",
+      "name": "中国长城",
+      "latest": 14.87,
+      "open": 14.23,
+      "high": 15.22,
+      "low": 14.09,
+      "pre_close": 14.23,
+      "change_pct": 4.5,
+      "volume": 2614915,
+      "amount": 383215.79325000005,
+      "volume_ratio": 2.7487702037947956,
+      "date": "2025-02-07",
+      "score": 14.945735919776878,
+      "reason": "动量突破: 涨幅4.5%"
+    },
+    {
+      "code": "000002",
+      "name": "万  科Ａ",
+      "latest": 7.42,
+      "open": 7.05,
+      "high": 7.65,
+      "low": 7.01,
+      "pre_close": 7.02,
+      "change_pct": 5.7,
+      "volume": 3269216,
+      "amount": 239633.5328,
+      "volume_ratio": 3.3490028490028516,
+      "date": "2025-02-07",
+      "score": 11.47840769340171,
+      "reason": "动量突破: 涨幅5.7%"
+    },
+    {
+      "code": "000062",
+      "name": "深圳华强",
+      "latest": 22.44,
+      "open": 21.63,
+      "high": 23.17,
+      "low": 21.52,
+      "pre_close": 21.62,
+      "change_pct": 3.79,
+      "volume": 397867,
+      "amount": 88903.38115,
+      "volume_ratio": 2.396392229417207,
+      "date": "2025-02-07",
+      "score": 5.6209367721503245,
+      "reason": "动量突破: 涨幅3.79%"
+    },
+    {
+      "code": "000032",
+      "name": "深桑达Ａ",
+      "latest": 18.28,
+      "open": 17.91,
+      "high": 18.55,
+      "low": 17.72,
+      "pre_close": 17.74,
+      "change_pct": 3.04,
+      "volume": 319938,
+      "amount": 58020.75629999999,
+      "volume_ratio": 2.0219842164599853,
+      "date": "2025-02-07",
+      "score": 4.169813218875991,
+      "reason": "动量突破: 涨幅3.04%"
+    }
+  ],
+  "reversal_picks": [],
+  "summary": {
+    "position_suggestion": "70-80%",
+    "advice": "市场情绪乐观，积极布局",
+    "watchlist": [
+      "000066",
+      "000002",
+      "000062"
+    ],
+    "risk_level": "中"
+  }
+}

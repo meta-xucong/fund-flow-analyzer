@@ -1,0 +1,186 @@
+{
+  "date": "2025-03-10",
+  "generated_at": "2026-03-24 22:29:31",
+  "sentiment": {
+    "score": 56.0,
+    "status": "中性偏乐观",
+    "up_count": 28,
+    "down_count": 18,
+    "up_ratio": 0.56,
+    "limit_up": 0,
+    "limit_down": 0,
+    "avg_change": 0.21
+  },
+  "sector_ranking": [
+    {
+      "rank": 1,
+      "name": "次新股",
+      "change_pct": 2.32,
+      "amount": 29631778491
+    },
+    {
+      "rank": 2,
+      "name": "陶瓷行业",
+      "change_pct": 1.27,
+      "amount": 1748465577
+    },
+    {
+      "rank": 3,
+      "name": "有色金属",
+      "change_pct": 0.66,
+      "amount": 87008385419
+    },
+    {
+      "rank": 4,
+      "name": "飞机制造",
+      "change_pct": 0.6,
+      "amount": 11438291121
+    },
+    {
+      "rank": 5,
+      "name": "玻璃行业",
+      "change_pct": 0.56,
+      "amount": 9655336108
+    },
+    {
+      "rank": 6,
+      "name": "船舶制造",
+      "change_pct": 0.54,
+      "amount": 5066669919
+    },
+    {
+      "rank": 7,
+      "name": "电子器件",
+      "change_pct": 0.5,
+      "amount": 134034270612
+    },
+    {
+      "rank": 8,
+      "name": "酿酒行业",
+      "change_pct": 0.49,
+      "amount": 9652280399
+    },
+    {
+      "rank": 9,
+      "name": "开发区",
+      "change_pct": 0.47,
+      "amount": 1734797953
+    },
+    {
+      "rank": 10,
+      "name": "电力行业",
+      "change_pct": 0.44,
+      "amount": 55151271549
+    }
+  ],
+  "momentum_picks": [
+    {
+      "code": "000065",
+      "name": "北方国际",
+      "latest": 11.61,
+      "open": 11.28,
+      "high": 11.65,
+      "low": 11.08,
+      "pre_close": 11.18,
+      "change_pct": 3.85,
+      "volume": 378057,
+      "amount": 42966.17805,
+      "volume_ratio": 2.4230769230769216,
+      "date": "2025-03-10",
+      "score": 4.282831495346153,
+      "reason": "动量突破: 涨幅3.85%"
+    }
+  ],
+  "reversal_picks": [
+    {
+      "code": "000034",
+      "name": "神州数码",
+      "latest": 47.43,
+      "open": 48.03,
+      "high": 48.46,
+      "low": 46.79,
+      "pre_close": 49.21,
+      "change_pct": -3.62,
+      "volume": 548096,
+      "amount": 261030.72,
+      "volume_ratio": 2.3085754927860203,
+      "date": "2025-03-10",
+      "score": 35.76868698557204,
+      "reason": "超跌反弹: 跌幅-3.62%"
+    },
+    {
+      "code": "000066",
+      "name": "中国长城",
+      "latest": 15.92,
+      "open": 16.34,
+      "high": 16.38,
+      "low": 15.85,
+      "pre_close": 16.48,
+      "change_pct": -3.4,
+      "volume": 1211714,
+      "amount": 195267.7111,
+      "volume_ratio": 2.1990291262135937,
+      "date": "2025-03-10",
+      "score": 31.161443807427187,
+      "reason": "超跌反弹: 跌幅-3.4%"
+    },
+    {
+      "code": "000056",
+      "name": "皇庭国际",
+      "latest": 3.54,
+      "open": 3.6,
+      "high": 3.69,
+      "low": 3.5,
+      "pre_close": 3.65,
+      "change_pct": -3.01,
+      "volume": 1127576,
+      "amount": 40536.3572,
+      "volume_ratio": 2.006849315068491,
+      "date": "2025-03-10",
+      "score": 21.090516490136984,
+      "reason": "超跌反弹: 跌幅-3.01%"
+    },
+    {
+      "code": "000050",
+      "name": "深天马Ａ",
+      "latest": 8.82,
+      "open": 9.0,
+      "high": 9.05,
+      "low": 8.78,
+      "pre_close": 8.99,
+      "change_pct": -1.89,
+      "volume": 214373,
+      "amount": 19111.35295,
+      "volume_ratio": 1.4454949944382642,
+      "date": "2025-03-10",
+      "score": 13.296557636376528,
+      "reason": "超跌反弹: 跌幅-1.89%"
+    },
+    {
+      "code": "000039",
+      "name": "中集集团",
+      "latest": 8.3,
+      "open": 8.4,
+      "high": 8.41,
+      "low": 8.28,
+      "pre_close": 8.42,
+      "change_pct": -1.43,
+      "volume": 203615,
+      "amount": 16991.671749999998,
+      "volume_ratio": 1.2125890736341995,
+      "date": "2025-03-10",
+      "score": 10.4247617347684,
+      "reason": "超跌反弹: 跌幅-1.43%"
+    }
+  ],
+  "summary": {
+    "position_suggestion": "50-70%",
+    "advice": "市场情绪中性偏乐观，适度参与",
+    "watchlist": [
+      "000065",
+      "000034",
+      "000066"
+    ],
+    "risk_level": "低"
+  }
+}

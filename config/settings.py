@@ -39,9 +39,18 @@ class Settings:
     # 数据库配置
     DB_ECHO: bool = False  # 是否打印SQL语句
     
-    # 报告生成时间 (每日)
+    # 报告生成时间 (每日) - 实时交易模式
     REPORT_HOUR: int = 9
-    REPORT_MINUTE: int = 0
+    REPORT_MINUTE: int = 25  # 9:25拉取数据，集合竞价结束，留5分钟决策时间
+    
+    # 数据获取截止配置
+    DATA_CUTOFF_MINUTE: int = 25  # 数据截止分钟数 (25 = 9:25，集合竞价结束)
+    DECISION_BUFFER_MINUTES: int = 5  # 决策缓冲时间(分钟)
+    
+    # 运行模式
+    RUN_MODE_LIVE: str = "live"       # 实时模式 - 固定25分钟
+    RUN_MODE_BACKTEST_25: str = "backtest_25"  # 回测25分钟
+    RUN_MODE_BACKTEST_30: str = "backtest_30"  # 回测30分钟(完整)
     
     # 板块强度计算权重 (总分100)
     SECTOR_WEIGHTS: Dict[str, float] = None

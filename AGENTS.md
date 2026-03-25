@@ -709,5 +709,75 @@ python tools/verify_source_integrity.py --root .
 
 ---
 
-*最后更新: 2026-03-19*  
-*文档版本: v1.0*
+## 16. 进程管理安全规范
+
+### 16.1 禁止误杀自身进程
+
+**规则**: 在执行杀进程操作时，必须识别并保护自身进程，禁止误杀。
+
+**具体要求**:
+1. 杀进程前必须列出所有匹配进程，识别出当前Python会话自身的PID
+2. 将自身PID从待杀列表中排除
+3. 确认剩余PID确实是需要终止的进程
+4. 执行杀操作时再次确认不会误伤自身
+
+**示例代码**:
+```python
+import os
+import psutil
+
+def safe_kill_processes(pattern):
+    """
+    安全地杀进程，保护自身不被误杀
+    
+    Args:
+        pattern: 进程名匹配模式
+    """
+    # 获取自身PID
+    my_pid = os.getpid()
+    my_process = psutil.Process(my_pid)
+    
+    # 获取待杀进程列表
+    targets = []
+    for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+        try:
+            if pattern in str(proc.info.get('name', '')) or \
+               pattern in str(proc.info.get('cmdline', '')):
+                # 排除自身进程
+                if proc.info['pid'] != my_pid and \
+                   proc.info['pid'] != my_process.ppid():
+                    targets.append(proc.info['pid'])
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
+    
+    # 确认列表中不包含自身
+    if my_pid in targets:
+        targets.remove(my_pid)
+        print("[WARNING] 已从列表中移除自身进程")
+    
+    # 执行杀进程
+    for pid in targets:
+        try:
+            process = psutil.Process(pid)
+            process.terminate()
+            print(f"已终止进程: {pid}")
+        except Exception as e:
+            print(f"终止进程 {pid} 失败: {e}")
+```
+
+**禁止行为**:
+- ❌ 使用通配符批量杀进程时不加筛选
+- ❌ 不检查PID直接杀所有匹配进程
+- ❌ 使用`taskkill /F /IM python.exe`等会误杀自身的命令
+- ❌ 在Shell中执行`killall python`等危险操作
+
+**正确行为**:
+- ✅ 始终识别并保护自身PID
+- ✅ 使用进程管理库（如psutil）精确控制
+- ✅ 杀进程前打印确认列表
+- ✅ 保留必要的系统进程
+
+---
+
+*最后更新: 2026-03-23*  
+*文档版本: v1.1*

@@ -1,0 +1,187 @@
+{
+  "date": "2026-03-24",
+  "generated_at": "2026-03-25 23:09:08",
+  "sentiment": {
+    "score": 96.08,
+    "status": "乐观",
+    "up_count": 49,
+    "down_count": 2,
+    "up_ratio": 0.9608,
+    "limit_up": 2,
+    "limit_down": 1,
+    "avg_change": 3.72
+  },
+  "sector_ranking": [
+    {
+      "rank": 1,
+      "name": "次新股",
+      "change_pct": 0.94,
+      "amount": 29597995242
+    },
+    {
+      "rank": 2,
+      "name": "飞机制造",
+      "change_pct": 0.71,
+      "amount": 10966086298
+    },
+    {
+      "rank": 3,
+      "name": "有色金属",
+      "change_pct": 0.61,
+      "amount": 101479611568
+    },
+    {
+      "rank": 4,
+      "name": "电子器件",
+      "change_pct": 0.58,
+      "amount": 146297841931
+    },
+    {
+      "rank": 5,
+      "name": "家具行业",
+      "change_pct": 0.5,
+      "amount": 3286051552
+    },
+    {
+      "rank": 6,
+      "name": "电子信息",
+      "change_pct": 0.49,
+      "amount": 181842692288
+    },
+    {
+      "rank": 7,
+      "name": "发电设备",
+      "change_pct": 0.47,
+      "amount": 57433494027
+    },
+    {
+      "rank": 8,
+      "name": "陶瓷行业",
+      "change_pct": 0.45,
+      "amount": 1683031470
+    },
+    {
+      "rank": 9,
+      "name": "仪器仪表",
+      "change_pct": 0.43,
+      "amount": 24807414526
+    },
+    {
+      "rank": 10,
+      "name": "机械行业",
+      "change_pct": 0.43,
+      "amount": 108712787292
+    }
+  ],
+  "momentum_picks": [
+    {
+      "code": "000063",
+      "name": "中兴通讯",
+      "latest": 32.92,
+      "open": 32.5,
+      "high": 32.93,
+      "low": 32.0,
+      "pre_close": 32.05,
+      "change_pct": 2.71,
+      "volume": 679329,
+      "amount": 220544.15985000005,
+      "volume_ratio": 1.857254290171614,
+      "date": "2026-03-24",
+      "score": 8.81467736960297,
+      "reason": "动量突破: 涨幅2.71%"
+    },
+    {
+      "code": "000001",
+      "name": "平安银行",
+      "latest": 10.88,
+      "open": 10.52,
+      "high": 10.89,
+      "low": 10.52,
+      "pre_close": 10.45,
+      "change_pct": 4.11,
+      "volume": 1622251,
+      "amount": 173661.96955000004,
+      "volume_ratio": 2.557416267942591,
+      "date": "2026-03-24",
+      "score": 8.388308847265556,
+      "reason": "动量突破: 涨幅4.11%"
+    },
+    {
+      "code": "000049",
+      "name": "德赛电池",
+      "latest": 28.44,
+      "open": 27.14,
+      "high": 28.5,
+      "low": 26.71,
+      "pre_close": 26.61,
+      "change_pct": 6.88,
+      "volume": 282056,
+      "amount": 77861.5588,
+      "volume_ratio": 3.9385569334836568,
+      "date": "2026-03-24",
+      "score": 7.450980924090194,
+      "reason": "动量突破: 涨幅6.88%"
+    },
+    {
+      "code": "000070",
+      "name": "特发信息",
+      "latest": 14.42,
+      "open": 14.0,
+      "high": 14.48,
+      "low": 13.71,
+      "pre_close": 13.6,
+      "change_pct": 6.03,
+      "volume": 655810,
+      "amount": 92436.41950000002,
+      "volume_ratio": 3.5147058823529425,
+      "date": "2026-03-24",
+      "score": 7.293916114411767,
+      "reason": "动量突破: 涨幅6.03%"
+    },
+    {
+      "code": "000060",
+      "name": "中金岭南",
+      "latest": 6.08,
+      "open": 5.92,
+      "high": 6.09,
+      "low": 5.78,
+      "pre_close": 5.78,
+      "change_pct": 5.19,
+      "volume": 1480015,
+      "amount": 87838.89025,
+      "volume_ratio": 3.095155709342559,
+      "date": "2026-03-24",
+      "score": 6.568260133105534,
+      "reason": "动量突破: 涨幅5.19%"
+    }
+  ],
+  "reversal_picks": [
+    {
+      "code": "000096",
+      "name": "广聚能源",
+      "latest": 10.11,
+      "open": 10.15,
+      "high": 10.19,
+      "low": 9.85,
+      "pre_close": 10.26,
+      "change_pct": -1.46,
+      "volume": 144694,
+      "amount": 14498.3388,
+      "volume_ratio": 1.2309941520467853,
+      "date": "2026-03-24",
+      "score": 10.48690524409357,
+      "reason": "超跌反弹: 跌幅-1.46%"
+    }
+  ],
+  "summary": {
+    "position_suggestion": "70-80%",
+    "advice": "市场情绪乐观，积极布局",
+    "watchlist": [
+      "000063",
+      "000001",
+      "000049",
+      "000096"
+    ],
+    "risk_level": "中"
+  }
+}

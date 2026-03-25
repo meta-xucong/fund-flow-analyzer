@@ -1,0 +1,152 @@
+{
+  "date": "2025-03-17",
+  "generated_at": "2026-03-24 22:59:37",
+  "sentiment": {
+    "score": 62.0,
+    "status": "中性偏乐观",
+    "up_count": 31,
+    "down_count": 18,
+    "up_ratio": 0.62,
+    "limit_up": 1,
+    "limit_down": 0,
+    "avg_change": 0.58
+  },
+  "sector_ranking": [
+    {
+      "rank": 1,
+      "name": "次新股",
+      "change_pct": 2.32,
+      "amount": 29631778491
+    },
+    {
+      "rank": 2,
+      "name": "陶瓷行业",
+      "change_pct": 1.27,
+      "amount": 1748465577
+    },
+    {
+      "rank": 3,
+      "name": "有色金属",
+      "change_pct": 0.66,
+      "amount": 87008385419
+    },
+    {
+      "rank": 4,
+      "name": "飞机制造",
+      "change_pct": 0.6,
+      "amount": 11438291121
+    },
+    {
+      "rank": 5,
+      "name": "玻璃行业",
+      "change_pct": 0.56,
+      "amount": 9655336108
+    },
+    {
+      "rank": 6,
+      "name": "船舶制造",
+      "change_pct": 0.54,
+      "amount": 5066669919
+    },
+    {
+      "rank": 7,
+      "name": "电子器件",
+      "change_pct": 0.5,
+      "amount": 134034270612
+    },
+    {
+      "rank": 8,
+      "name": "酿酒行业",
+      "change_pct": 0.49,
+      "amount": 9652280399
+    },
+    {
+      "rank": 9,
+      "name": "开发区",
+      "change_pct": 0.47,
+      "amount": 1734797953
+    },
+    {
+      "rank": 10,
+      "name": "电力行业",
+      "change_pct": 0.44,
+      "amount": 55151271549
+    }
+  ],
+  "momentum_picks": [],
+  "reversal_picks": [
+    {
+      "code": "000001",
+      "name": "平安银行",
+      "latest": 11.5,
+      "open": 11.63,
+      "high": 11.67,
+      "low": 11.46,
+      "pre_close": 11.97,
+      "change_pct": -3.93,
+      "volume": 4603612,
+      "amount": 532407.7278000001,
+      "volume_ratio": 2.4632414369256503,
+      "date": "2025-03-17",
+      "score": 51.19686926385131,
+      "reason": "超跌反弹: 跌幅-3.93%"
+    },
+    {
+      "code": "000014",
+      "name": "沙河股份",
+      "latest": 11.3,
+      "open": 11.63,
+      "high": 11.63,
+      "low": 11.27,
+      "pre_close": 11.63,
+      "change_pct": -2.84,
+      "volume": 99795,
+      "amount": 11426.5275,
+      "volume_ratio": 1.9187446259673262,
+      "date": "2025-03-17",
+      "score": 18.608815626934653,
+      "reason": "超跌反弹: 跌幅-2.84%"
+    },
+    {
+      "code": "000048",
+      "name": "京基智农",
+      "latest": 15.77,
+      "open": 16.09,
+      "high": 16.18,
+      "low": 15.72,
+      "pre_close": 16.09,
+      "change_pct": -1.99,
+      "volume": 65465,
+      "amount": 10441.6675,
+      "volume_ratio": 1.4944064636420147,
+      "date": "2025-03-17",
+      "score": 13.460896302284029,
+      "reason": "超跌反弹: 跌幅-1.99%"
+    },
+    {
+      "code": "000065",
+      "name": "北方国际",
+      "latest": 11.28,
+      "open": 11.36,
+      "high": 11.45,
+      "low": 11.23,
+      "pre_close": 11.46,
+      "change_pct": -1.57,
+      "volume": 269887,
+      "amount": 30605.1858,
+      "volume_ratio": 1.285340314136132,
+      "date": "2025-03-17",
+      "score": 11.950939918272265,
+      "reason": "超跌反弹: 跌幅-1.57%"
+    }
+  ],
+  "summary": {
+    "position_suggestion": "50-70%",
+    "advice": "市场情绪中性偏乐观，适度参与",
+    "watchlist": [
+      "000001",
+      "000014"
+    ],
+    "risk_level": "低"
+  }
+}

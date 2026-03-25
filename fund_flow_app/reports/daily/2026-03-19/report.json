@@ -1,0 +1,186 @@
+{
+  "date": "2026-03-19",
+  "generated_at": "2026-03-25 23:32:55",
+  "sentiment": {
+    "score": 15.0,
+    "status": "悲观",
+    "up_count": 6,
+    "down_count": 34,
+    "up_ratio": 0.15,
+    "limit_up": 1,
+    "limit_down": 0,
+    "avg_change": -1.46
+  },
+  "sector_ranking": [
+    {
+      "rank": 1,
+      "name": "次新股",
+      "change_pct": 0.94,
+      "amount": 29597995242
+    },
+    {
+      "rank": 2,
+      "name": "飞机制造",
+      "change_pct": 0.71,
+      "amount": 10966086298
+    },
+    {
+      "rank": 3,
+      "name": "有色金属",
+      "change_pct": 0.61,
+      "amount": 101479611568
+    },
+    {
+      "rank": 4,
+      "name": "电子器件",
+      "change_pct": 0.58,
+      "amount": 146297841931
+    },
+    {
+      "rank": 5,
+      "name": "家具行业",
+      "change_pct": 0.5,
+      "amount": 3286051552
+    },
+    {
+      "rank": 6,
+      "name": "电子信息",
+      "change_pct": 0.49,
+      "amount": 181842692288
+    },
+    {
+      "rank": 7,
+      "name": "发电设备",
+      "change_pct": 0.47,
+      "amount": 57433494027
+    },
+    {
+      "rank": 8,
+      "name": "陶瓷行业",
+      "change_pct": 0.45,
+      "amount": 1683031470
+    },
+    {
+      "rank": 9,
+      "name": "仪器仪表",
+      "change_pct": 0.43,
+      "amount": 24807414526
+    },
+    {
+      "rank": 10,
+      "name": "机械行业",
+      "change_pct": 0.43,
+      "amount": 108712787292
+    }
+  ],
+  "momentum_picks": [
+    {
+      "code": "000032",
+      "name": "深桑达Ａ",
+      "latest": 18.96,
+      "open": 17.7,
+      "high": 19.9,
+      "low": 17.66,
+      "pre_close": 18.09,
+      "change_pct": 4.81,
+      "volume": 808758,
+      "amount": 151884.7524,
+      "volume_ratio": 2.904643449419572,
+      "date": "2026-03-19",
+      "score": 8.223328641651744,
+      "reason": "动量突破: 涨幅4.81%"
+    }
+  ],
+  "reversal_picks": [
+    {
+      "code": "000021",
+      "name": "深科技",
+      "latest": 32.43,
+      "open": 32.5,
+      "high": 33.7,
+      "low": 31.8,
+      "pre_close": 33.63,
+      "change_pct": -3.57,
+      "volume": 1435488,
+      "amount": 470122.32,
+      "volume_ratio": 2.284121320249781,
+      "date": "2026-03-19",
+      "score": 45.92435864049956,
+      "reason": "超跌反弹: 跌幅-3.57%"
+    },
+    {
+      "code": "000061",
+      "name": "农 产 品",
+      "latest": 8.47,
+      "open": 8.8,
+      "high": 8.82,
+      "low": 8.4,
+      "pre_close": 8.87,
+      "change_pct": -4.51,
+      "volume": 141696,
+      "amount": 12200.025599999999,
+      "volume_ratio": 2.7547914317925515,
+      "date": "2026-03-19",
+      "score": 28.669584143585098,
+      "reason": "超跌反弹: 跌幅-4.51%"
+    },
+    {
+      "code": "000007",
+      "name": "全新好",
+      "latest": 14.42,
+      "open": 14.84,
+      "high": 14.84,
+      "low": 14.32,
+      "pre_close": 14.92,
+      "change_pct": -3.35,
+      "volume": 100979,
+      "amount": 14722.7382,
+      "volume_ratio": 2.175603217158177,
+      "date": "2026-03-19",
+      "score": 21.837343344316352,
+      "reason": "超跌反弹: 跌幅-3.35%"
+    },
+    {
+      "code": "000016",
+      "name": "深康佳Ａ",
+      "latest": 3.26,
+      "open": 3.31,
+      "high": 3.35,
+      "low": 3.26,
+      "pre_close": 3.37,
+      "change_pct": -3.26,
+      "volume": 334856,
+      "amount": 11066.990799999998,
+      "volume_ratio": 2.1320474777448117,
+      "date": "2026-03-19",
+      "score": 21.11744449548962,
+      "reason": "超跌反弹: 跌幅-3.26%"
+    },
+    {
+      "code": "000002",
+      "name": "万  科Ａ",
+      "latest": 4.5,
+      "open": 4.61,
+      "high": 4.63,
+      "low": 4.5,
+      "pre_close": 4.63,
+      "change_pct": -2.81,
+      "volume": 1406717,
+      "amount": 64216.63105,
+      "volume_ratio": 1.9038876889848801,
+      "date": "2026-03-19",
+      "score": 21.068606930469763,
+      "reason": "超跌反弹: 跌幅-2.81%"
+    }
+  ],
+  "summary": {
+    "position_suggestion": "20-30%",
+    "advice": "市场情绪悲观，谨慎操作",
+    "watchlist": [
+      "000032",
+      "000021",
+      "000061"
+    ],
+    "risk_level": "中"
+  }
+}

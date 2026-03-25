@@ -1,0 +1,236 @@
+{
+  "date": "2026-03-18",
+  "generated_at": "2026-03-25 23:31:34",
+  "sentiment": {
+    "score": 52.5,
+    "status": "中性偏乐观",
+    "up_count": 21,
+    "down_count": 19,
+    "up_ratio": 0.525,
+    "limit_up": 3,
+    "limit_down": 0,
+    "avg_change": 0.97
+  },
+  "sector_ranking": [
+    {
+      "rank": 1,
+      "name": "次新股",
+      "change_pct": 0.94,
+      "amount": 29597995242
+    },
+    {
+      "rank": 2,
+      "name": "飞机制造",
+      "change_pct": 0.71,
+      "amount": 10966086298
+    },
+    {
+      "rank": 3,
+      "name": "有色金属",
+      "change_pct": 0.61,
+      "amount": 101479611568
+    },
+    {
+      "rank": 4,
+      "name": "电子器件",
+      "change_pct": 0.58,
+      "amount": 146297841931
+    },
+    {
+      "rank": 5,
+      "name": "家具行业",
+      "change_pct": 0.5,
+      "amount": 3286051552
+    },
+    {
+      "rank": 6,
+      "name": "电子信息",
+      "change_pct": 0.49,
+      "amount": 181842692288
+    },
+    {
+      "rank": 7,
+      "name": "发电设备",
+      "change_pct": 0.47,
+      "amount": 57433494027
+    },
+    {
+      "rank": 8,
+      "name": "陶瓷行业",
+      "change_pct": 0.45,
+      "amount": 1683031470
+    },
+    {
+      "rank": 9,
+      "name": "仪器仪表",
+      "change_pct": 0.43,
+      "amount": 24807414526
+    },
+    {
+      "rank": 10,
+      "name": "机械行业",
+      "change_pct": 0.43,
+      "amount": 108712787292
+    }
+  ],
+  "momentum_picks": [
+    {
+      "code": "000021",
+      "name": "深科技",
+      "latest": 33.63,
+      "open": 32.77,
+      "high": 33.79,
+      "low": 32.51,
+      "pre_close": 32.26,
+      "change_pct": 4.25,
+      "volume": 1723259,
+      "amount": 571260.3584999999,
+      "volume_ratio": 2.6233725976441487,
+      "date": "2026-03-18",
+      "score": 20.411834313586485,
+      "reason": "动量突破: 涨幅4.25%"
+    },
+    {
+      "code": "000034",
+      "name": "神州数码",
+      "latest": 37.8,
+      "open": 36.2,
+      "high": 37.9,
+      "low": 35.88,
+      "pre_close": 35.92,
+      "change_pct": 5.23,
+      "volume": 268086,
+      "amount": 98896.92540000001,
+      "volume_ratio": 3.1169265033407507,
+      "date": "2026-03-18",
+      "score": 6.929063664004451,
+      "reason": "动量突破: 涨幅5.23%"
+    },
+    {
+      "code": "000014",
+      "name": "沙河股份",
+      "latest": 15.4,
+      "open": 14.7,
+      "high": 15.99,
+      "low": 14.63,
+      "pre_close": 14.54,
+      "change_pct": 5.91,
+      "volume": 369821,
+      "amount": 56619.5951,
+      "volume_ratio": 3.457359009628615,
+      "date": "2026-03-18",
+      "score": 6.1370032587771695,
+      "reason": "动量突破: 涨幅5.91%"
+    },
+    {
+      "code": "000032",
+      "name": "深桑达Ａ",
+      "latest": 18.09,
+      "open": 17.56,
+      "high": 18.36,
+      "low": 17.41,
+      "pre_close": 17.57,
+      "change_pct": 2.96,
+      "volume": 242555,
+      "amount": 43380.96175,
+      "volume_ratio": 1.979795105293112,
+      "date": "2026-03-18",
+      "score": 3.6733059156758667,
+      "reason": "动量突破: 涨幅2.96%"
+    }
+  ],
+  "reversal_picks": [
+    {
+      "code": "000010",
+      "name": "美丽生态",
+      "latest": 4.6,
+      "open": 4.74,
+      "high": 4.77,
+      "low": 4.55,
+      "pre_close": 4.72,
+      "change_pct": -2.54,
+      "volume": 590700,
+      "amount": 27526.62,
+      "volume_ratio": 1.7711864406779672,
+      "date": "2026-03-18",
+      "score": 17.618703881355934,
+      "reason": "超跌反弹: 跌幅-2.54%"
+    },
+    {
+      "code": "000035",
+      "name": "中国天楹",
+      "latest": 7.27,
+      "open": 7.41,
+      "high": 7.65,
+      "low": 7.14,
+      "pre_close": 7.38,
+      "change_pct": -1.49,
+      "volume": 1114755,
+      "amount": 82436.13225,
+      "volume_ratio": 1.245257452574528,
+      "date": "2026-03-18",
+      "score": 14.062321517649057,
+      "reason": "超跌反弹: 跌幅-1.49%"
+    },
+    {
+      "code": "000002",
+      "name": "万  科Ａ",
+      "latest": 4.63,
+      "open": 4.68,
+      "high": 4.69,
+      "low": 4.61,
+      "pre_close": 4.7,
+      "change_pct": -1.49,
+      "volume": 1087653,
+      "amount": 50575.8645,
+      "volume_ratio": 1.2446808510638327,
+      "date": "2026-03-18",
+      "score": 12.468154927127667,
+      "reason": "超跌反弹: 跌幅-1.49%"
+    },
+    {
+      "code": "000009",
+      "name": "中国宝安",
+      "latest": 9.06,
+      "open": 9.22,
+      "high": 9.28,
+      "low": 8.99,
+      "pre_close": 9.21,
+      "change_pct": -1.63,
+      "volume": 254462,
+      "amount": 23245.1037,
+      "volume_ratio": 1.3143322475570052,
+      "date": "2026-03-18",
+      "score": 11.940919680114009,
+      "reason": "超跌反弹: 跌幅-1.63%"
+    },
+    {
+      "code": "000059",
+      "name": "华锦股份",
+      "latest": 5.78,
+      "open": 5.85,
+      "high": 5.88,
+      "low": 5.68,
+      "pre_close": 5.87,
+      "change_pct": -1.53,
+      "volume": 395814,
+      "amount": 22878.0492,
+      "volume_ratio": 1.266609880749573,
+      "date": "2026-03-18",
+      "score": 11.327122221499145,
+      "reason": "超跌反弹: 跌幅-1.53%"
+    }
+  ],
+  "summary": {
+    "position_suggestion": "50-70%",
+    "advice": "市场情绪中性偏乐观，适度参与",
+    "watchlist": [
+      "000021",
+      "000034",
+      "000014",
+      "000010",
+      "000035"
+    ],
+    "risk_level": "低"
+  }
+}

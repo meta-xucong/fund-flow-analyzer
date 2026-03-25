@@ -54,16 +54,45 @@ class FundFlowSystem:
     盘前资金流向分析系统主类
     
     协调各模块完成每日分析任务
+    支持盘前数据截止时间控制 (默认9:25)
     """
     
-    def __init__(self):
-        """初始化系统"""
+    def __init__(self, run_mode: str = None, cutoff_minute: int = None):
+        """
+        初始化系统
+        
+        Args:
+            run_mode: 运行模式 (live/backtest_25/backtest_30)
+            cutoff_minute: 数据截止分钟数，None则根据模式自动选择
+        """
         self.logger = logging.getLogger(__name__)
         self.logger.info("=" * 60)
         self.logger.info("盘前资金流向分析系统初始化...")
         
+        # 设置运行模式
+        self.run_mode = run_mode or settings.RUN_MODE_LIVE
+        
+        # 根据模式确定数据截止时间
+        if cutoff_minute is None:
+            if self.run_mode == settings.RUN_MODE_BACKTEST_30:
+                # 回测30分钟模式 - 使用完整数据(收盘价)
+                self.cutoff_minute = 30
+                self.use_open_price = False
+            else:
+                # 实时模式或回测25分钟模式 - 使用9:25数据
+                self.cutoff_minute = settings.DATA_CUTOFF_MINUTE
+                self.use_open_price = (self.run_mode == settings.RUN_MODE_BACKTEST_25)
+        else:
+            self.cutoff_minute = cutoff_minute
+            self.use_open_price = False
+        
+        self.logger.info(f"运行模式: {self.run_mode}")
+        self.logger.info(f"数据截止时间: 09:{self.cutoff_minute:02d}")
+        if self.use_open_price:
+            self.logger.info("回测模式: 使用开盘价模拟9:25数据")
+        
         # 初始化各模块
-        self.fetcher = DataFetcher()
+        self.fetcher = DataFetcher(cutoff_minute=self.cutoff_minute)
         self.storage = DataStorage()
         self.analyzer = MarketAnalyzer()
         self.selector = StrategySelector()
@@ -94,7 +123,7 @@ class FundFlowSystem:
         try:
             # ========== 1. 数据采集 ==========
             self.logger.info("【1/5】数据采集...")
-            market_data = self.fetcher.fetch_market_spot()
+            market_data = self.fetcher.fetch_market_spot(use_open_price=self.use_open_price)
             sector_list = self.fetcher.fetch_sector_list()
             northbound_data = self.fetcher.fetch_northbound_flow(days=5)
             
@@ -212,18 +241,44 @@ class FundFlowSystem:
                 'error': str(e)
             }
     
-    def run_backtest(self, start_date: str, end_date: str) -> dict:
+    def run_backtest(self, start_date: str, end_date: str, mode: str = None) -> dict:
         """
         执行回测
         
         Args:
             start_date: 开始日期 (YYYY-MM-DD)
             end_date: 结束日期 (YYYY-MM-DD)
+            mode: 回测模式 (25/30)，默认使用当前系统设置
             
         Returns:
             回测结果
         """
-        self.logger.info(f"开始回测: {start_date} 至 {end_date}")
+        # 确定回测模式
+        if mode == '30':
+            backtest_mode = settings.RUN_MODE_BACKTEST_30
+            self.logger.info(f"开始回测 [30分钟完整数据模式]: {start_date} 至 {end_date}")
+        elif mode == '25':
+            backtest_mode = settings.RUN_MODE_BACKTEST_25
+            self.logger.info(f"开始回测 [25分钟实战模式]: {start_date} 至 {end_date}")
+        else:
+            backtest_mode = self.run_mode
+            self.logger.info(f"开始回测 [{backtest_mode}模式]: {start_date} 至 {end_date}")
+        
+        # 临时切换模式用于回测
+        original_mode = self.run_mode
+        original_cutoff = self.cutoff_minute
+        original_use_open = self.use_open_price
+        
+        if mode == '27':
+            self.run_mode = settings.RUN_MODE_BACKTEST_25
+            self.cutoff_minute = 27
+            self.use_open_price = True
+            self.fetcher.cutoff_minute = 27
+        elif mode == '30':
+            self.run_mode = settings.RUN_MODE_BACKTEST_30
+            self.cutoff_minute = 30
+            self.use_open_price = False
+            self.fetcher.cutoff_minute = 30
         
         # 生成日期列表
         dates = []
@@ -237,20 +292,29 @@ class FundFlowSystem:
             current += timedelta(days=1)
         
         self.logger.info(f"回测日期: {len(dates)} 个交易日")
+        self.logger.info(f"数据截止时间: 09:{self.cutoff_minute:02d}")
         
         results = []
         for date in dates:
             result = self.run_daily_analysis(date, save_data=True)
             results.append(result)
         
+        # 恢复原始模式
+        self.run_mode = original_mode
+        self.cutoff_minute = original_cutoff
+        self.use_open_price = original_use_open
+        self.fetcher.cutoff_minute = original_cutoff
+        
         # 汇总回测结果
         success_count = sum(1 for r in results if r['status'] == 'success')
         
-        self.logger.info(f"\n回测完成: {success_count}/{len(dates)} 天成功")
+        self.logger.info(f"\n回测完成 [{mode or 'current'}模式]: {success_count}/{len(dates)} 天成功")
         
         return {
             'start_date': start_date,
             'end_date': end_date,
+            'mode': mode or 'current',
+            'cutoff_minute': self.cutoff_minute,
             'total_days': len(dates),
             'success_days': success_count,
             'results': results
@@ -291,20 +355,34 @@ class FundFlowSystem:
 def main():
     """主函数"""
     parser = argparse.ArgumentParser(
-        description='盘前资金流向分析系统',
+        description='盘前资金流向分析系统 - 支持9:25数据截止时间',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 示例:
-  python main.py                    # 执行今日分析
-  python main.py --date 2024-03-19  # 执行指定日期分析
-  python main.py --backtest 2024-01-01 2024-03-19  # 回测
-  python main.py --query 2024-03-19 # 查询历史报告
+  # 实时交易模式 (默认9:25拉取数据，留5分钟决策)
+  python main.py
+  
+  # 回测模式 - 25分钟实战数据 (开盘价模拟9:25)
+  python main.py --backtest 2024-01-01 2024-03-19 --mode 25
+  
+  # 回测模式 - 30分钟完整数据 (收盘价)
+  python main.py --backtest 2024-01-01 2024-03-19 --mode 30
+  
+  # 其他操作
+  python main.py --date 2024-03-19          # 指定日期分析
+  python main.py --query 2024-03-19         # 查询历史报告
+  python main.py --latest                   # 查看最新报告
+  python main.py --cutoff 25                # 自定义截止时间(9:25)
         """
     )
     
     parser.add_argument('--date', type=str, help='分析日期 (YYYY-MM-DD)，默认今天')
     parser.add_argument('--backtest', nargs=2, metavar=('START', 'END'), 
                        help='回测模式，指定开始和结束日期')
+    parser.add_argument('--mode', type=str, choices=['live', '25', '30'],
+                       help='运行模式: live=实时(9:25), 25=回测25分钟, 30=回测30分钟')
+    parser.add_argument('--cutoff', type=int, default=None,
+                       help='数据截止分钟数 (默认25，即9:25)')
     parser.add_argument('--query', type=str, help='查询历史报告日期 (YYYY-MM-DD)')
     parser.add_argument('--latest', action='store_true', help='查看最新报告')
     parser.add_argument('--no-save', action='store_true', help='不保存数据到数据库')
@@ -314,15 +392,26 @@ def main():
     # 设置日志
     logger = setup_logging()
     
+    # 确定运行模式
+    run_mode = settings.RUN_MODE_LIVE  # 默认实时模式
+    if args.mode == '27':
+        run_mode = settings.RUN_MODE_BACKTEST_25
+    elif args.mode == '30':
+        run_mode = settings.RUN_MODE_BACKTEST_30
+    elif args.mode == 'live':
+        run_mode = settings.RUN_MODE_LIVE
+    
     # 初始化系统
-    system = FundFlowSystem()
+    system = FundFlowSystem(run_mode=run_mode, cutoff_minute=args.cutoff)
     
     # 执行命令
     if args.backtest:
         # 回测模式
         start_date, end_date = args.backtest
-        result = system.run_backtest(start_date, end_date)
-        print(f"\n回测结果: {result['success_days']}/{result['total_days']} 天成功")
+        # 根据--mode参数确定回测模式，默认25
+        backtest_mode = args.mode if args.mode in ['25', '30'] else '25'
+        result = system.run_backtest(start_date, end_date, mode=backtest_mode)
+        print(f"\n回测结果 [{result['mode']}模式]: {result['success_days']}/{result['total_days']} 天成功")
         
     elif args.query:
         # 查询模式

@@ -87,13 +87,22 @@ class ReportGenerator:
             sector_analysis
         )
         
+        # 从market_data获取数据截止时间信息 (取第一行)
+        cutoff_minute = market_data['cutoff_minute'].iloc[0] if 'cutoff_minute' in market_data.columns else settings.DATA_CUTOFF_MINUTE
+        cutoff_time = market_data['cutoff_time'].iloc[0] if 'cutoff_time' in market_data.columns else f"09:{settings.DATA_CUTOFF_MINUTE:02d}"
+        data_source_type = market_data['data_source'].iloc[0] if 'data_source' in market_data.columns else 'real'
+        
         report = {
             'meta': {
                 'report_id': f"RPT{date.replace('-', '')}090000",
                 'date': date,
                 'data_source': 'AKShare',
                 'version': '1.0',
-                'generated_at': datetime.now().isoformat()
+                'generated_at': datetime.now().isoformat(),
+                'cutoff_time': cutoff_time,
+                'cutoff_minute': int(cutoff_minute) if pd.notna(cutoff_minute) else settings.DATA_CUTOFF_MINUTE,
+                'data_source_type': data_source_type,
+                'decision_buffer_minutes': settings.DECISION_BUFFER_MINUTES
             },
             'summary': {
                 'market_sentiment': sentiment_analysis.get('sentiment', '未知'),
@@ -160,7 +169,13 @@ class ReportGenerator:
         
         lines = []
         lines.append("=" * 80)
-        lines.append(f"  盘前资金流向分析报告  {meta['date']}")
+        
+        # 显示数据截止时间
+        cutoff_time = meta.get('cutoff_time', '09:25')
+        data_source = meta.get('data_source_type', 'real')
+        source_label = "[开盘价模拟]" if data_source == 'open' else "[实时数据]"
+        
+        lines.append(f"  盘前资金流向分析报告  {meta['date']}  数据截止: {cutoff_time} {source_label}")
         lines.append("=" * 80)
         lines.append("")
         
