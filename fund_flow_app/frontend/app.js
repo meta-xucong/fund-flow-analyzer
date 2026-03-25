@@ -22,6 +22,33 @@ class FundFlowApp {
         this.startClock();
         this.loadStatus();
         this.loadBacktestHistory();
+        this.setDefaultBacktestDates();
+    }
+
+    // 设置默认回测日期为最近5天
+    setDefaultBacktestDates() {
+        const today = new Date();
+        
+        // 计算最近5天的日期范围
+        const endDate = new Date(today);
+        endDate.setDate(today.getDate() - 1); // 昨天（最近一个完整交易日）
+        
+        const startDate = new Date(endDate);
+        startDate.setDate(endDate.getDate() - 4); // 往前推4天，共5天
+        
+        // 格式化为 YYYY-MM-DD
+        const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+        
+        const startInput = document.getElementById('backtest-start');
+        const endInput = document.getElementById('backtest-end');
+        
+        if (startInput) startInput.value = formatDate(startDate);
+        if (endInput) endInput.value = formatDate(endDate);
     }
 
     // 绑定事件

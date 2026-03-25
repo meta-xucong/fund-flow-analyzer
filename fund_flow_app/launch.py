@@ -10,6 +10,8 @@ import socket
 import signal
 import warnings
 import psutil
+import webbrowser
+import threading
 
 # 忽略警告
 warnings.filterwarnings('ignore')
@@ -111,6 +113,16 @@ def main():
     print(f"\n访问地址: http://localhost:{port}")
     print("\n按 Ctrl+C 停止服务")
     print("============================================================\n")
+    
+    # 延迟2秒后自动打开浏览器
+    def open_browser():
+        time.sleep(2)
+        url = f"http://localhost:{port}"
+        print(f"[*] 正在打开浏览器: {url}")
+        webbrowser.open(url)
+    
+    browser_thread = threading.Thread(target=open_browser, daemon=True)
+    browser_thread.start()
     
     # 直接导入并运行服务器
     try:
