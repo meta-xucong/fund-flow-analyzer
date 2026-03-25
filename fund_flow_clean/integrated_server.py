@@ -15,15 +15,8 @@ from flask import Flask, jsonify, request, send_from_directory, send_file
 from flask_cors import CORS
 from datetime import datetime
 import threading
-import warnings
 
-# 忽略警告
-warnings.filterwarnings('ignore')
-
-# 设置环境变量
-os.environ['NO_PROXY'] = 'qt.gtimg.cn,sina.com.cn,localhost,127.0.0.1'
-os.environ['TQDM_DISABLE'] = '1'
-
+# 导入后端模块
 from backend.data_fetcher import DataFetcher
 from backend.report_generator import ReportGenerator
 from backend.backtest_engine import BacktestEngine
@@ -48,9 +41,6 @@ data_fetcher = DataFetcher()
 report_generator = ReportGenerator()
 backtest_engine = BacktestEngine()
 db_manager = DatabaseManager()
-
-# 服务器运行标志
-server_running = True
 
 # ============ 前端路由 ============
 
@@ -130,7 +120,6 @@ def run_backtest():
                 app_status['is_running_backtest'] = False
         
         thread = threading.Thread(target=backtest_task)
-        thread.daemon = True
         thread.start()
         
         return jsonify({'success': True, 'message': '回测任务已启动'})
@@ -141,6 +130,7 @@ def run_backtest():
 @app.route('/api/backtest/progress', methods=['GET'])
 def get_backtest_progress():
     """获取回测进度"""
+    # 获取引擎的详细状态
     engine_status = backtest_engine.get_status()
     return jsonify({
         'success': True,
@@ -170,6 +160,7 @@ def get_single_backtest_result(result_id):
         if not stored_result:
             return jsonify({'success': False, 'message': '结果不存在'}), 404
         
+        # 处理包装结构，提取实际的回测数据
         if 'result' in stored_result and isinstance(stored_result['result'], dict):
             actual_result = stored_result['result']
             actual_result['start_date'] = stored_result.get('start_date', actual_result.get('start_date', result_id.split('_')[0]))
@@ -190,16 +181,22 @@ def download_backtest(result_id):
         if not stored_result:
             return jsonify({'success': False, 'message': '结果不存在'}), 404
         
+        # 处理包装结构：数据库中存储的是 {start_date, end_date, result: {...}, created_at}
+        # 需要提取 result 字段作为实际回测数据
         if 'result' in stored_result and isinstance(stored_result['result'], dict):
             actual_result = stored_result['result']
+            # 确保有完整的元数据
             actual_result['start_date'] = stored_result.get('start_date', result_id.split('_')[0])
             actual_result['end_date'] = stored_result.get('end_date', result_id.split('_')[1])
         else:
             actual_result = stored_result
         
+        # 确保结果目录存在
         results_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'backtest_results')
         os.makedirs(results_dir, exist_ok=True)
         
+        # 生成压缩包
+        from backend.backtest_engine import BacktestEngine
         engine = BacktestEngine()
         zip_path = engine.create_download_package(actual_result)
         
@@ -238,25 +235,33 @@ def get_push_settings():
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)})
 
+def shutdown_server():
+    """优雅关闭服务器"""
+    print("\n[*] 正在关闭服务器...")
+    
+    # 关闭Flask的请求上下文
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func:
+        func()
+    
+    print("[*] 服务器已关闭")
+
 @app.route('/api/shutdown', methods=['POST'])
 def shutdown():
-    """关闭服务器API端点"""
-    global server_running
-    server_running = False
-    
-    def shutdown_server():
-        func = request.environ.get('werkzeug.server.shutdown')
-        if func:
-            func()
-    
+    """API端点：关闭服务器"""
     shutdown_server()
     return jsonify({'success': True, 'message': 'Server shutting down...'})
 
-def signal_handler(signum, frame):
+# 全局标志用于控制服务器运行
+server_running = True
+
+def signal_handler(sig, frame):
     """信号处理器"""
     global server_running
-    print(f'\n[*] 收到信号 {signum}，正在关闭服务器...')
+    print('\n[*] 收到关闭信号，正在优雅关闭...')
     server_running = False
+    # 给服务器一点时间处理剩余请求
+    time.sleep(0.5)
     sys.exit(0)
 
 # 注册信号处理器
@@ -273,12 +278,13 @@ if __name__ == '__main__':
     print("\nPress Ctrl+C to stop\n")
     
     try:
+        # 使用 threaded=True 但设置更合理的参数
         app.run(
             host='0.0.0.0', 
             port=5000, 
             debug=False,
             threaded=True,
-            use_reloader=False
+            use_reloader=False  # 禁用重载器，避免双进程
         )
     except KeyboardInterrupt:
         print("\n[*] 服务器已停止")
