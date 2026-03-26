@@ -896,33 +896,57 @@ input:checked + .toggle-slider:before {
     table-layout: fixed; /* 固定列宽，确保对齐 */
 }
 
-/* 回测结果表格列宽定义 */
-.trades-table th:nth-child(1), .trades-table td:nth-child(1) { width: 90px; }  /* 买入日期 */
-.trades-table th:nth-child(2), .trades-table td:nth-child(2) { width: 70px; }  /* 代码 */
-.trades-table th:nth-child(3), .trades-table td:nth-child(3) { width: 80px; }  /* 名称 */
-.trades-table th:nth-child(4), .trades-table td:nth-child(4) { width: 60px; }  /* 策略 */
-.trades-table th:nth-child(5), .trades-table td:nth-child(5) { width: 70px; }  /* 买入价 */
-.trades-table th:nth-child(6), .trades-table td:nth-child(6) { width: 65px; }  /* 第1天 */
-.trades-table th:nth-child(7), .trades-table td:nth-child(7) { width: 65px; }  /* 第2天 */
-.trades-table th:nth-child(8), .trades-table td:nth-child(8) { width: 65px; }  /* 第3天 */
-.trades-table th:nth-child(9), .trades-table td:nth-child(9) { width: 65px; }  /* 第4天 */
-.trades-table th:nth-child(10), .trades-table td:nth-child(10) { width: 65px; } /* 第5天 */
-.trades-table th:nth-child(11), .trades-table td:nth-child(11) { width: 75px; } /* 总收益 */
+/* 回测结果表格列宽定义 - 总宽度控制在容器内 */
+.trades-table th:nth-child(1), .trades-table td:nth-child(1) { width: 80px; }  /* 买入日期 */
+.trades-table th:nth-child(2), .trades-table td:nth-child(2) { width: 60px; }  /* 代码 */
+.trades-table th:nth-child(3), .trades-table td:nth-child(3) { width: 70px; }  /* 名称 */
+.trades-table th:nth-child(4), .trades-table td:nth-child(4) { width: 50px; }  /* 策略 */
+.trades-table th:nth-child(5), .trades-table td:nth-child(5) { width: 60px; }  /* 买入价 */
+.trades-table th:nth-child(6), .trades-table td:nth-child(6) { width: 55px; }  /* Day1 */
+.trades-table th:nth-child(7), .trades-table td:nth-child(7) { width: 55px; }  /* Day2 */
+.trades-table th:nth-child(8), .trades-table td:nth-child(8) { width: 55px; }  /* Day3 */
+.trades-table th:nth-child(9), .trades-table td:nth-child(9) { width: 55px; }  /* Day4 */
+.trades-table th:nth-child(10), .trades-table td:nth-child(10) { width: 55px; } /* Day5 */
+.trades-table th:nth-child(11), .trades-table td:nth-child(11) { width: 65px; } /* 总收益 */
+
+/* 确保表头和数据行严格对齐 */
+.trades-table thead {
+    display: table-header-group;
+}
+
+.trades-table tbody {
+    display: table-row-group;
+}
+
+.trades-table tr {
+    display: table-row;
+}
 
 .trades-table th {
     background: var(--hover-bg);
-    padding: 14px 16px;
-    text-align: left;
+    padding: 12px 8px;
+    text-align: center;
     font-weight: 600;
     color: var(--text-secondary);
     border-bottom: 1px solid var(--border-color);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .trades-table td {
-    padding: 14px 16px;
+    padding: 12px 8px;
     border-bottom: 1px solid var(--border-color);
     color: var(--text-primary);
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 左对齐的列 */
+.trades-table th:nth-child(1), .trades-table td:nth-child(1),
+.trades-table th:nth-child(3), .trades-table td:nth-child(3) {
+    text-align: left;
 }
 
 .trades-table tbody tr:hover {
@@ -1062,17 +1086,17 @@ input:checked + .toggle-slider:before {
     }
     
     /* 小屏幕下调整列宽 */
-    .trades-table th:nth-child(1), .trades-table td:nth-child(1) { width: 75px; }
-    .trades-table th:nth-child(2), .trades-table td:nth-child(2) { width: 55px; }
-    .trades-table th:nth-child(3), .trades-table td:nth-child(3) { width: 60px; }
-    .trades-table th:nth-child(4), .trades-table td:nth-child(4) { width: 50px; }
-    .trades-table th:nth-child(5), .trades-table td:nth-child(5) { width: 55px; }
-    .trades-table th:nth-child(6), .trades-table td:nth-child(6) { width: 50px; }
-    .trades-table th:nth-child(7), .trades-table td:nth-child(7) { width: 50px; }
-    .trades-table th:nth-child(8), .trades-table td:nth-child(8) { width: 50px; }
-    .trades-table th:nth-child(9), .trades-table td:nth-child(9) { width: 50px; }
-    .trades-table th:nth-child(10), .trades-table td:nth-child(10) { width: 50px; }
-    .trades-table th:nth-child(11), .trades-table td:nth-child(11) { width: 60px; }
+    .trades-table th:nth-child(1), .trades-table td:nth-child(1) { width: 70px; }
+    .trades-table th:nth-child(2), .trades-table td:nth-child(2) { width: 50px; }
+    .trades-table th:nth-child(3), .trades-table td:nth-child(3) { width: 55px; }
+    .trades-table th:nth-child(4), .trades-table td:nth-child(4) { width: 45px; }
+    .trades-table th:nth-child(5), .trades-table td:nth-child(5) { width: 50px; }
+    .trades-table th:nth-child(6), .trades-table td:nth-child(6) { width: 45px; }
+    .trades-table th:nth-child(7), .trades-table td:nth-child(7) { width: 45px; }
+    .trades-table th:nth-child(8), .trades-table td:nth-child(8) { width: 45px; }
+    .trades-table th:nth-child(9), .trades-table td:nth-child(9) { width: 45px; }
+    .trades-table th:nth-child(10), .trades-table td:nth-child(10) { width: 45px; }
+    .trades-table th:nth-child(11), .trades-table td:nth-child(11) { width: 55px; }
     
     .trades-filter {
         flex-direction: column;
