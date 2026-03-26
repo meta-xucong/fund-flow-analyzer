@@ -688,11 +688,11 @@ class FundFlowApp {
                                     <th>名称</th>
                                     <th>策略</th>
                                     <th>买入价</th>
-                                    <th>第1天</th>
-                                    <th>第2天</th>
-                                    <th>第3天</th>
-                                    <th>第4天</th>
-                                    <th>第5天</th>
+                                    <th title="买入后第1个交易日">Day1</th>
+                                    <th title="买入后第2个交易日">Day2</th>
+                                    <th title="买入后第3个交易日">Day3</th>
+                                    <th title="买入后第4个交易日">Day4</th>
+                                    <th title="买入后第5个交易日">Day5</th>
                                     <th>总收益</th>
                                 </tr>
                             </thead>
