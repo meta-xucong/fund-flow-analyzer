@@ -87,32 +87,10 @@ def get_today_report():
         now = datetime.now()
         date_str = now.strftime('%Y-%m-%d')
         
-        # 首先尝试获取今日数据（使用实时模式）
-        print(f"[*] 尝试获取今日数据: {date_str}")
-        data = data_fetcher.fetch_daily_data(date_str, use_historical=False)
-        
-        # 如果今日数据失败，尝试获取前一交易日数据
-        if data is None or not data.get('stocks') or len(data['stocks']) == 0:
-            print(f"[*] 今日数据获取失败，尝试获取前一交易日数据")
-            # 计算前一交易日（简单处理：往前推1-3天直到获取到数据）
-            from datetime import timedelta
-            for days_back in range(1, 5):
-                prev_date = now - timedelta(days=days_back)
-                # 跳过周末
-                if prev_date.weekday() >= 5:  # 5=周六, 6=周日
-                    continue
-                prev_date_str = prev_date.strftime('%Y-%m-%d')
-                print(f"[*] 尝试获取 {prev_date_str} 的数据")
-                data = data_fetcher.fetch_daily_data(prev_date_str, use_historical=True)
-                if data and data.get('stocks') and len(data['stocks']) > 0:
-                    date_str = prev_date_str
-                    print(f"[*] 成功获取 {date_str} 的数据: {len(data['stocks'])} 只股票")
-                    break
-        else:
-            print(f"[*] 成功获取今日数据: {len(data['stocks'])} 只股票")
-        
-        if data is None or not data.get('stocks') or len(data['stocks']) == 0:
-            return jsonify({'success': False, 'message': '无法获取数据，请检查网络连接或数据源'})
+        # 获取数据（使用默认模式：优先实时数据，失败则回退到历史数据）
+        data = data_fetcher.fetch_daily_data(date_str)
+        if data is None:
+            return jsonify({'success': False, 'message': '数据获取失败'})
         
         report = report_generator.generate_report(data)
         
