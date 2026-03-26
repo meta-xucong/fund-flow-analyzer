@@ -257,8 +257,45 @@ class FundFlowApp {
         const reversal = report.reversal_picks || [];
         const summary = report.summary;
 
+        // 获取元数据
+        const meta = report.meta || {};
+        
         let html = `
             <div class="report-content">
+                <!-- 数据源信息 -->
+                <div class="glass-card data-source-card" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(155, 89, 182, 0.1)); border-left: 4px solid #3498db;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
+                        <div style="flex: 1; min-width: 250px;">
+                            <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 4px;">
+                                <span>📊</span> 数据来源
+                            </div>
+                            <div style="font-weight: 600; color: var(--text-primary); font-size: 14px;">
+                                ${meta.data_source || '腾讯财经 + 申万行业'}
+                            </div>
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 4px;">
+                                <span>🕐</span> 数据时间
+                            </div>
+                            <div style="font-weight: 600; color: var(--text-primary); font-size: 14px;">
+                                ${meta.fetch_time || report.generated_at || '未知'}
+                            </div>
+                        </div>
+                        <div style="flex: 1; min-width: 280px;">
+                            <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 4px;">
+                                <span>📈</span> 数据说明
+                            </div>
+                            <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.4;">
+                                ${meta.data_description || '基于前一交易日完整交易数据（09:30-15:00）计算'}
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color); font-size: 11px; color: var(--text-tertiary);">
+                        <span>💡</span> ${meta.update_note || '盘前分析数据每日09:25前更新'} | 
+                        <span style="color: var(--accent-blue);">${meta.data_period || '前一交易日收盘数据'}</span>
+                    </div>
+                </div>
+                
                 <!-- 市场情绪 -->
                 <div class="glass-card report-section">
                     <h4>市场情绪</h4>
@@ -688,11 +725,11 @@ class FundFlowApp {
                                     <th>名称</th>
                                     <th>策略</th>
                                     <th>买入价</th>
-                                    <th>第1天</th>
-                                    <th>第2天</th>
-                                    <th>第3天</th>
-                                    <th>第4天</th>
-                                    <th>第5天</th>
+                                    <th title="买入后第1个交易日">Day1</th>
+                                    <th title="买入后第2个交易日">Day2</th>
+                                    <th title="买入后第3个交易日">Day3</th>
+                                    <th title="买入后第4个交易日">Day4</th>
+                                    <th title="买入后第5个交易日">Day5</th>
                                     <th>总收益</th>
                                 </tr>
                             </thead>
