@@ -210,13 +210,15 @@ def get_today_report():
         report = report_generator.generate_report(data)
         
         # 4. 添加数据源和时间元数据
+        # 注：盘前分析系统使用前一交易日收盘数据作为参考
+        # 9:00-9:25集合竞价实时数据需要专业行情接口，当前使用历史收盘数据作为趋势参考
         report['meta'] = {
             'data_source': '腾讯财经 (stock_zh_a_hist_tx) + 申万行业',
             'fetch_time': now.strftime('%Y-%m-%d %H:%M:%S'),
             'data_date': date_str,
-            'data_period': f'{date_str} 收盘数据',
-            'data_description': f'基于 {date_str} 完整交易数据（09:30-15:00）计算',
-            'update_note': f'最新可用数据日期: {date_str}'
+            'data_period': f'{date_str} 收盘数据（用于盘前分析参考）',
+            'data_description': f'基于 {date_str} 收盘数据（前一交易日15:00）进行盘前趋势分析。注：9:00-9:25集合竞价实时数据需专业行情接口',
+            'update_note': f'数据日期: {date_str} | 盘前分析参考数据（非实时集合竞价数据）'
         }
         
         return jsonify({'success': True, 'data': report})
