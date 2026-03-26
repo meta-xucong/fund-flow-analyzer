@@ -365,7 +365,7 @@ class DataFetcher:
             logger.error(f"[{date_str}] historical data fetch failed: {e}")
             return pd.DataFrame()
     
-    def fetch_daily_data(self, date_str: str, sample_size: int = 2000, use_historical: bool = False, status_callback=None) -> Optional[Dict]:
+    def fetch_daily_data(self, date_str: str, sample_size: int = 2000, use_historical: bool = False, status_callback=None, force_current: bool = False) -> Optional[Dict]:
         """
         获取某日完整数据
         
@@ -374,11 +374,12 @@ class DataFetcher:
             sample_size: 采样股票数量
             use_historical: 是否强制使用历史数据（用于回测）
             status_callback: 状态回调函数
+            force_current: 是否强制获取指定日期数据，失败不回退到历史数据
         
         Returns:
             Dict包含stocks, sectors, sentiment
         """
-        logger.info(f"[{date_str}] fetching data... (use_historical={use_historical})")
+        logger.info(f"[{date_str}] fetching data... (use_historical={use_historical}, force_current={force_current})")
         
         # 如果强制使用历史数据，直接调用历史数据接口
         if use_historical:
@@ -428,18 +429,30 @@ class DataFetcher:
                 stocks_df['date'] = date_str
                 logger.info(f"  stocks (realtime): {len(stocks_df)}")
                 
-                # 检查数据质量：如果平均成交量为0，说明是休市日，使用历史数据
+                # 检查数据质量：如果平均成交量为0，说明是休市日或无数据
                 avg_volume = stocks_df['volume'].mean() if not stocks_df.empty else 0
                 if avg_volume == 0:
-                    logger.warning(f"  realtime data shows market closed, trying historical data...")
-                    hist_df = self.fetch_historical_data(date_str, sample_size=200)
-                    if not hist_df.empty:
-                        stocks_df = hist_df
-                        logger.info(f"  using historical data: {len(stocks_df)} stocks")
+                    if force_current:
+                        # 强制获取当前日期，不回退到历史数据
+                        logger.warning(f"  realtime data shows market closed or no data, force_current=True, returning None")
+                        return None
+                    else:
+                        # 正常模式：尝试历史数据
+                        logger.warning(f"  realtime data shows market closed, trying historical data...")
+                        hist_df = self.fetch_historical_data(date_str, sample_size=200)
+                        if not hist_df.empty:
+                            stocks_df = hist_df
+                            logger.info(f"  using historical data: {len(stocks_df)} stocks")
             else:
-                # 实时接口失败，尝试历史数据
-                logger.warning(f"  realtime fetch failed, trying historical data...")
-                stocks_df = self.fetch_historical_data(date_str, sample_size=200)
+                # 实时接口失败
+                if force_current:
+                    # 强制获取当前日期，不回退到历史数据
+                    logger.warning(f"  realtime fetch failed, force_current=True, returning None")
+                    return None
+                else:
+                    # 正常模式：尝试历史数据
+                    logger.warning(f"  realtime fetch failed, trying historical data...")
+                    stocks_df = self.fetch_historical_data(date_str, sample_size=200)
             
             if stocks_df.empty:
                 logger.error(f"  no data available for {date_str}")
