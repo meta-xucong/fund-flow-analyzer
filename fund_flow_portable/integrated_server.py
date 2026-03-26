@@ -84,12 +84,25 @@ def get_status():
 def get_today_report():
     """获取今日报告"""
     try:
-        date_str = datetime.now().strftime('%Y-%m-%d')
-        data = data_fetcher.fetch_daily_data(date_str)
+        now = datetime.now()
+        date_str = now.strftime('%Y-%m-%d')
+        
+        # 获取数据（盘前数据，使用历史数据模式）
+        data = data_fetcher.fetch_daily_data(date_str, use_historical=True)
         if data is None:
             return jsonify({'success': False, 'message': '数据获取失败'})
         
         report = report_generator.generate_report(data)
+        
+        # 添加数据源和时间元数据
+        report['meta'] = {
+            'data_source': '腾讯财经 (stock_zh_a_hist_tx) + 申万行业',
+            'fetch_time': now.strftime('%Y-%m-%d %H:%M:%S'),
+            'data_period': '前一交易日收盘数据',
+            'data_description': '基于前一交易日完整交易数据（09:30-15:00）计算，用于盘前分析参考',
+            'update_note': '盘前分析数据每日09:25前更新'
+        }
+        
         return jsonify({'success': True, 'data': report})
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)})

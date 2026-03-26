@@ -1030,6 +1030,18 @@ input:checked + .toggle-slider:before {
     color: var(--text-primary);
 }
 
+/* 数据源信息卡片 */
+.data-source-card {
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    transition: all 0.3s ease;
+}
+
+.data-source-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(52, 152, 219, 0.15);
+}
+
 /* 响应式适配 */
 @media (max-width: 768px) {
     .summary-grid {
