@@ -59,11 +59,27 @@ echo.
 
 :RUN
 echo [*] 检查依赖...
-%PYTHON% -c "import flask, flask_cors, pandas, akshare, requests, psutil" 2>nul
-if %errorlevel% == 0 goto :START
+%PYTHON% -c "import flask, flask_cors, pandas, akshare, requests, psutil, openpyxl" 2>nul
+if %errorlevel% == 0 goto :CHECK_OPENPYXL
 
 echo [*] 安装依赖（首次运行需要）...
-%PYTHON% -m pip install -q flask flask-cors pandas akshare requests psutil --no-warn-script-location
+%PYTHON% -m pip install -q flask flask-cors pandas akshare requests psutil openpyxl --no-warn-script-location
+if %errorlevel% neq 0 (
+    echo [!] 依赖安装失败，请检查网络连接
+    pause
+    exit /b 1
+)
+echo [OK] 依赖安装完成
+echo.
+goto :START
+
+:CHECK_OPENPYXL
+REM 检查openpyxl版本
+%PYTHON% -c "import openpyxl; assert openpyxl.__version__ >= '3.1.5'" 2>nul
+if %errorlevel% == 0 goto :START
+
+echo [*] 升级 openpyxl...
+%PYTHON% -m pip install -q --upgrade openpyxl --no-warn-script-location
 if %errorlevel% neq 0 (
     echo [!] 依赖安装失败，请检查网络连接
     pause
