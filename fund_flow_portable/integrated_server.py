@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from flask import Flask, jsonify, request, send_from_directory, send_file
 from flask_cors import CORS
-from datetime import datetime
+from datetime import datetime, timedelta
 import threading
 import warnings
 
@@ -64,6 +64,86 @@ def serve_static(filename):
     """提供静态文件"""
     return send_from_directory(FRONTEND_DIR, filename)
 
+# ============ 辅助函数 ============
+
+def is_market_open(date=None):
+    """
+    判断指定日期是否开市（简单规则：周一到周五开市，周末休市）
+    注：未考虑法定节假日
+    
+    Returns:
+        (bool, str) - (是否开市, 提示信息)
+    """
+    if date is None:
+        date = datetime.now()
+    
+    weekday = date.weekday()  # 0=周一, 6=周日
+    
+    if weekday >= 5:  # 周六或周日
+        days_until_monday = 7 - weekday
+        next_open = date + timedelta(days=days_until_monday)
+        return False, f"今日休市（周末），下次开市：{next_open.strftime('%Y-%m-%d')}（周一）"
+    
+    return True, "今日开市"
+
+def fetch_today_data_with_retry(date_str, max_retries=3):
+    """
+    获取今日数据，带指数退避重试
+    只获取指定日期数据，绝不回退到历史数据
+    
+    Args:
+        date_str: 日期字符串 YYYY-MM-DD
+        max_retries: 最大重试次数
+        
+    Returns:
+        (data, error_msg) - 成功返回数据，失败返回错误信息
+    """
+    for attempt in range(max_retries + 1):
+        try:
+            print(f"[*] 第{attempt + 1}次尝试获取 {date_str} 数据...")
+            
+            # 只获取指定日期数据，force_current=True确保不回退
+            data = data_fetcher.fetch_daily_data(
+                date_str, 
+                sample_size=2000, 
+                use_historical=False,  # 不使用历史数据模式
+                force_current=True     # 强制获取指定日期，不回退
+            )
+            
+            # 检查数据是否有效（小心处理DataFrame）
+            if data is not None:
+                stocks = data.get('stocks')
+                if stocks is not None:
+                    # 检查stocks是否为空DataFrame或空列表
+                    is_empty = False
+                    if hasattr(stocks, 'empty'):  # DataFrame
+                        is_empty = stocks.empty
+                    elif hasattr(stocks, '__len__'):  # 列表或其他可迭代对象
+                        is_empty = len(stocks) == 0
+                    
+                    if not is_empty:
+                        print(f"[OK] 成功获取 {date_str} 数据")
+                        return data, None
+            
+            if attempt < max_retries:
+                # 指数退避：1秒, 2秒, 4秒
+                delay = 2 ** attempt
+                print(f"[!] 未获取到数据，{delay}秒后重试...")
+                time.sleep(delay)
+            else:
+                return None, f"经过{max_retries + 1}次尝试，无法获取 {date_str} 数据"
+                
+        except Exception as e:
+            print(f"[!] 获取数据异常: {e}")
+            if attempt < max_retries:
+                delay = 2 ** attempt
+                print(f"[*] {delay}秒后重试...")
+                time.sleep(delay)
+            else:
+                return None, f"获取数据失败: {str(e)}"
+    
+    return None, "未知错误"
+
 # ============ API路由 ============
 
 @app.route('/api/status', methods=['GET'])
@@ -87,14 +167,49 @@ def get_today_report():
         now = datetime.now()
         date_str = now.strftime('%Y-%m-%d')
         
-        # 获取数据（使用默认模式：优先实时数据，失败则回退到历史数据）
-        data = data_fetcher.fetch_daily_data(date_str)
-        if data is None:
-            return jsonify({'success': False, 'message': '数据获取失败'})
+        # 1. 判断今天是否开市
+        is_open, msg = is_market_open(now)
         
+        if not is_open:
+            # 休市，返回提示
+            return jsonify({
+                'success': True,
+                'data': {
+                    'is_market_open': False,
+                    'message': msg,
+                    'date': date_str,
+                    'sentiment': {'status': '休市', 'score': 0},
+                    'sector_ranking': [],
+                    'momentum_picks': [],
+                    'reversal_picks': [],
+                    'summary': {'position_suggestion': '休市', 'risk_level': '低', 'advice': msg},
+                    'meta': {
+                        'data_source': '-',
+                        'fetch_time': now.strftime('%Y-%m-%d %H:%M:%S'),
+                        'data_date': date_str,
+                        'data_period': '休市',
+                        'data_description': msg,
+                        'update_note': '股市休市期间无数据'
+                    }
+                }
+            })
+        
+        # 2. 开市，必须获取今日数据（带指数退避重试）
+        print(f"[*] 今日开市，获取 {date_str} 数据...")
+        data, error_msg = fetch_today_data_with_retry(date_str, max_retries=3)
+        
+        if data is None:
+            # 获取失败，返回错误
+            return jsonify({
+                'success': False,
+                'message': f'今日开市但数据获取失败: {error_msg}',
+                'error_type': 'DATA_FETCH_FAILED'
+            })
+        
+        # 3. 生成报告
         report = report_generator.generate_report(data)
         
-        # 添加数据源和时间元数据
+        # 4. 添加数据源和时间元数据
         report['meta'] = {
             'data_source': '腾讯财经 (stock_zh_a_hist_tx) + 申万行业',
             'fetch_time': now.strftime('%Y-%m-%d %H:%M:%S'),
@@ -105,11 +220,16 @@ def get_today_report():
         }
         
         return jsonify({'success': True, 'data': report})
+        
     except Exception as e:
         print(f"[!] 获取今日报告失败: {e}")
         import traceback
         traceback.print_exc()
-        return jsonify({'success': False, 'message': str(e)})
+        return jsonify({
+            'success': False,
+            'message': str(e),
+            'error_type': 'EXCEPTION'
+        })
 
 @app.route('/api/backtest/run', methods=['POST'])
 def run_backtest():
